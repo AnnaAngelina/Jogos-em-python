@@ -1,3 +1,3 @@
-# Segundo-repositorio
- Meu segundo repositório de teste :D
+# Jogos em python
+ Repositório para jogos :D
  
