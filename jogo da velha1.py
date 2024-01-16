@@ -1,6 +1,8 @@
 import os
+import csv
 import random
 from colorama import Fore, Back, Style
+
 
 lim = True
 linhas_caract = []
@@ -10,6 +12,86 @@ jogadas = 0
 
 def limpartela():
     os.system('cls')
+
+def dadosconver(registro):
+    dado = []
+    with open(registro, mode='r', encoding='utf-8') as arquivo_csv:
+        arquivo_csv = csv.DictReader(arquivo_csv, delimiter=',')
+        for i in arquivo_csv:
+            dado.append(i)
+    return dado
+
+def atualizar(registro, dado):
+    cabecalho = dado[0].keys()
+    with open(registro, mode='w', newline='', encoding='utf-8') as arquivo_csv:
+        arquivo_csv = csv.DictWriter(arquivo_csv, fieldnames=cabecalho, delimiter=',')
+        arquivo_csv.writeheader()
+        for i in dado:
+            arquivo_csv.writerow(i)
+
+def jogadores_name(dado):
+    lim = 0
+    global jogador1, jogador2
+    jogador1 = input('Digite o nome do Jogador 1: ')
+    for linha in dado:
+        if str(linha['nome']).upper() == jogador1.upper():
+            lim = 1
+            print(f'Bem vindo(a) {jogador1}')
+    if lim == 0:
+        esc = input('Parece que você não está cadastrado(a).\nVocê deseja fazer o cadastro ou entrar sem conta? ')
+        if esc.upper() == 'FAZER CADASTRO':
+            limpartela()
+            nome = input('Digite seu nome: ')
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+            limpartela()
+        elif esc.upper() == 'Entrar sem conta':
+            limpartela()
+            num = random.randint(10,99)
+            nome = 'usuario' + str(num)
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+
+    jogador2 = input('Digite o nome do jogador 2: ')
+    for linha in dado:
+        if str(linha['nome']).upper() == jogador2.upper():
+            lim = 1
+            print(f'Bem vindo(a) {jogador2}')
+    if lim == 0:
+        esc = input('Parece que você não está cadastrado(a).\nVocê deseja fazer o cadastro ou entrar sem conta? ')
+        if esc.upper() == 'FAZER CADASTRO':
+            limpartela()
+            nome = input('Digite seu nome: ')
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+            limpartela()
+        elif esc.upper() == 'Entrar sem conta':
+            limpartela()
+            num = random.randint(10,99)
+            nome = 'usuario' + str(num)
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+    return jogador1, jogador2
+
+def jogadorunic_name(dado):
+    unic_jogador = input('Digite seu nome: ')
+    for linha in dado:
+        if str(linha['nome']).upper() == unic_jogador.upper():
+            lim = 1
+            print(f'Bem vindo(a) {unic_jogador}')
+    if lim == 0:
+        esc = input('Parece que você não está cadastrado(a).\nVocê deseja fazer o cadastro ou entrar sem conta? ')
+        if esc.upper() == 'FAZER CADASTRO':
+            nome = input('Digite seu nome: ')
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+            limpartela()
+        elif esc.upper() == 'Entrar sem conta':
+            num = random.randint(10,99)
+            nome = 'usuario' + str(num)
+            novo = {'nome': nome, 'vitorias': 0}
+            dado.append(novo)
+    return unic_jogador
 
 def interface():
     print(52* '*')
@@ -23,11 +105,6 @@ def escolha_jogadores():
 escolha = escolha_jogadores()
 limpartela()
 
-def jogadores_name():
-    jogador1 = input('Digite o nome do Jogador 1: ')
-    jogador2 = input('Digite o nome do jogador 2: ')
-    return jogador1, jogador2
-
 def jogadorunic_name():
     unic_jogador = input('Digite seu nome: ')
     return unic_jogador
@@ -36,6 +113,8 @@ linhas_caract = []
 colunas_caract = []
 jogadores = 2
 jogadas = 0
+vitoriaj1 = 0
+vitoriaj2 = 0
 
 graficos = [
     [' ', ' ', ' '],
@@ -82,7 +161,6 @@ def vez_jogador1():
     if jogadores == 1 and jogadas < 9:
         if graficos[linha][coluna] == ' ':
             graficos[linha][coluna] = 'X'
-            print('oi')
             jogadas += 1
             jogadores = 2
         else:
@@ -106,7 +184,7 @@ def vez_jogador2():
             print('A coluna', coluna, 'da linha', linha, 'já está ocupada, tente novamente.' )
     velha()
 
-def verificar_vitoria1():
+def verificar_vitoria1(vitoriaj1, vitoriaj2):
     global lim
     vito = 0
     a = 0
@@ -117,9 +195,13 @@ def verificar_vitoria1():
             for i in range(len(graficos[a])):
                 if graficos[row][i] == s:
                     vito +=1
-            if vito == 3:
-                print(f'Parabéns, o {jogador1 if s == "X" else jogador2} ganhou!')
+            if vito == 3 and s == 'X':
+                print(f'Parabéns, o {jogador1} ganhou!')
+                vitoriaj1 += 1
                 return True
+            elif vito == 3 and s == 'O':
+                print(f'Parabéns, o {jogador2} ganhou!')
+                vitoriaj2 += 1
 
     for s in range(len(simb)):        
         for row in range(len(graficos)):
@@ -127,30 +209,42 @@ def verificar_vitoria1():
             for i in range(len(graficos[0])):
                 if graficos[i][row] == simb[s]:
                     vito +=1
-            if vito == 3:
-                print(f'Parabéns, o {jogador1 if s == "X" else jogador2} ganhou!')
+            if vito == 3 and s == 'X':
+                print(f'Parabéns, o {jogador1} ganhou!')
+                vitoriaj1 += 1
                 return True
+            elif vito == 3 and s == 'O':
+                print(f'Parabéns, o {jogador2} ganhou!')
+                vitoriaj2 += 1
 
     for s in simb:
         vito = 0
         for i in range(len(graficos)):
             if graficos[i][i] == s:
                 vito += 1
-        if vito == 3:
-            print(f'Parabéns, o {jogador1 if s == "X" else jogador2} ganhou!')
+        if vito == 3 and s == 'X':
+            print(f'Parabéns, o {jogador1} ganhou!')
+            vitoriaj1 += 1
             return True
+        elif vito == 3 and s == 'O':
+            print(f'Parabéns, o {jogador2} ganhou!')
+            vitoriaj2 += 1
         
     for s in simb:
         vito = 0
         for i in range(len(graficos)):
             if graficos[i][len(graficos) - 1 - i] == s:
                 vito += 1
-        if vito == 3:
-            print(f'Parabéns, o {jogador1 if s == "X" else jogador2} ganhou!')
+        if vito == 3 and s == 'X':
+            print(f'Parabéns, o {jogador1} ganhou!')
+            vitoriaj1 += 1
             return True
+        elif vito == 3 and s == 'O':
+            print(f'Parabéns, o {jogador2} ganhou!')
+            vitoriaj2 += 1
     return False
 
-def verificar_vitoria2():
+def verificar_vitoria2(vitoriaj1):
     global lim
     vito = 0
     a = 0
@@ -164,6 +258,7 @@ def verificar_vitoria2():
             if vito == 3:
                 if s == 'X':
                     print('Parabéns, você ganhou!')
+                    vitoriaj1 += 1
                     return True
                 else:
                     print('Você perdeu!')
@@ -209,24 +304,28 @@ def verificar_vitoria2():
                 print('Você perdeu!')
                 return True
     return False
+
+jog_registrados = dadosconver('jogadores.csv')
 
 while True:
     velha
     if escolha.upper() == 'MULTIPLAYER':
-        jogador1, jogador2 = jogadores_name()
+        jogador1, jogador2 = jogadores_name(jog_registrados)
+        atualizar('jogadores.csv', jog_registrados)
         limpartela()
         vez_jogador2()
-        if verificar_vitoria1():
+        if verificar_vitoria1(vitoriaj1, vitoriaj2):
             break
         vez_jogador1()
-        if verificar_vitoria1():
+        if verificar_vitoria1(vitoriaj1, vitoriaj2):
             break
     else:
-        unic_jogador = jogadorunic_name()
+        unic_jogador = jogadorunic_name(jog_registrados)
+        atualizar('jogadores.csv', jog_registrados)
         limpartela()
         single_player()
-        if verificar_vitoria2():
+        if verificar_vitoria2(vitoriaj1):
             break
         vez_jogador1()
-        if verificar_vitoria2():
+        if verificar_vitoria2(vitoriaj1):
             break

@@ -1,3 +1,3 @@
-# Jogos
- Repositório de joguinhos :D
+# Jogos em python
+ Repositório para jogos :D
  
