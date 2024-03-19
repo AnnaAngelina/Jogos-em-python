@@ -1,0 +1,41 @@
+def exemp02():
+    print('BEM VINDO(A) AO JOGUINHO DE OPERAÇÕES')
+    while True:
+        lim = 1
+        opera = input('Deseja a operação de soma ou subtração? ')
+        numeros = [23, 56, 78, 11, 34, 90, 54, 92, 58, 25, 87, 64, 42]
+        escolhido = random.choice(numeros)
+        print('Número escolhido: ', escolhido, '\n(Você só tem três chances)')
+        while lim <= 3:
+            if opera.lower() == 'soma':
+                print('Digite dois números que a soma resulta no número apresentado:')
+                num1 = int(input('- '))
+                num2 = int(input('- '))
+                if lim == 3:
+                    print('Você perdeu:(')
+                    break
+                elif (num1+num2) == escolhido:
+                    print('Parabéns! Você acertou')
+                    break
+                else:
+                    print('Você perdeu uma chance! Tente novamente')
+                    lim += 1
+            if opera.lower() == 'subtracao' or opera.lower() == 'subtração':
+                print('Digite dois números que a subtração resulta no número apresentado:')
+                num1 = int(input('- '))
+                num2 = int(input('- '))
+                if lim == 3:
+                    print('Você perdeu:(')
+                    break
+                elif (num1-num2) == escolhido:
+                    print('Parabéns! Você acertou')
+                    break
+                else:
+                    print('Você perdeu uma chance! Tente novamente')
+                    lim += 1
+        cont = input('Deseja continuar a jogar?(s/n) ')
+        if cont.lower() != 's':
+            os.system('clear')
+            break
+        else:
+            os.system('clear')
